@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated 3-lug-2010 0.38.48 by Hibernate Tools 3.2.4.GA -->
+<!-- Generated 8-ago-2010 18.17.13 by Hibernate Tools 3.2.4.GA -->
 <hibernate-mapping>
     <class name="it.infolabs.hibernate.Um" table="um" schema="public">
-        <id name="idum" type="long">
+        <id name="idum" type="long" unsaved-value="0">
             <column name="idum" />
-            <generator class="assigned" />
+            <generator class="increment" />
         </id>
         <property name="nome" type="string">
             <column name="nome" length="40" not-null="true" />
