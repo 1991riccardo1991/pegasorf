@@ -1718,7 +1718,7 @@ public class ArticoloAddMod extends JFrame implements PropertyChangeListener,Win
 					ArticoloHome.getInstance().begin();
 					ArticoloHome.getInstance().persist(a);
 					ArticoloHome.getInstance().begin();
-					ArticoloHome.getInstance().commit();
+					ArticoloHome.getInstance().commitAndClose();
 					Scarico sc = new Scarico();
 					Carico c = new Carico();
 					try {
