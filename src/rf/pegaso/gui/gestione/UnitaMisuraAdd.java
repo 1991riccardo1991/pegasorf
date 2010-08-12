@@ -3,6 +3,9 @@
  */
 package rf.pegaso.gui.gestione;
 
+import it.infolabs.hibernate.Um;
+import it.infolabs.hibernate.UmHome;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -254,21 +257,14 @@ public class UnitaMisuraAdd extends JDialog {
 		UnitaDiMisura r = new UnitaDiMisura();
 		r.setDescrizione(this.txtDescrizione.getText());
 		r.setNome(this.txtNome.getText());
-//		try {
-//			Um um = new Um();
-//			um.setDescrizione(this.txtDescrizione.getText());
-//			um.setNome(this.txtNome.getText());
-//			UmHome.getInstance().begin();
-//			UmHome.getInstance().attachDirty(um);
-//			UmHome.getInstance().commit();
-			dbm.notifyDBStateChange();
-			//r.insertUnitaDiMisura();
-//		} catch (IDNonValido e) {
-//			JOptionPane.showMessageDialog(this,
-//					"Errore inserimento Unità di Misura", "ERRORE",
-//					JOptionPane.ERROR_MESSAGE);
-//			e.printStackTrace();
-//		}
+		Um um = new Um();
+		um.setDescrizione(this.txtDescrizione.getText());
+		um.setNome(this.txtNome.getText());
+		UmHome.getInstance().begin();
+		UmHome.getInstance().attachDirty(um);
+		UmHome.getInstance().commit();
+		dbm.notifyDBStateChange();
+		//r.insertUnitaDiMisura();
 		dispose();
 
 	}
