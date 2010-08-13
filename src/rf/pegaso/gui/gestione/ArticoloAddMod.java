@@ -1625,7 +1625,13 @@ public class ArticoloAddMod extends JFrame implements PropertyChangeListener,Win
 	private void caricaCmbPannelli() {
 		cmbPannelli.removeAllItems();
 		PannelliHome.getInstance().begin();
-		ArrayList<Pannelli> pannelli = PannelliHome.getInstance().allPannelli();
+		ArrayList<Pannelli> pannelli = new ArrayList<Pannelli>();
+		try {
+			pannelli = PannelliHome.getInstance().allPannelli();
+		} catch (FindAllEntityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String [] allPannelli = new String[pannelli.size()];
 		// questi due array li usiamo per tenere
 		// traccia dei codici del fornitore in
