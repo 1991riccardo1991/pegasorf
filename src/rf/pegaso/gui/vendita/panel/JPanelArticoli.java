@@ -1,27 +1,29 @@
 package rf.pegaso.gui.vendita.panel;
 
 import it.infolabs.hibernate.Articolo;
+import it.infolabs.hibernate.PannelliHome;
 import it.infolabs.hibernate.Reparto;
+import it.infolabs.hibernate.exception.FindByNotFoundException;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.FontMetrics;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Vector;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import javax.swing.JScrollPane;
+
+import rf.utility.db.DBEvent;
+import rf.utility.db.DBStateChange;
+import rf.utility.db.RowEvent;
 
 
 import java.awt.GridBagLayout;
 
 
-public class JPanelArticoli extends JPanel{
+public class JPanelArticoli extends JPanel implements DBStateChange{
 
 	private static final long serialVersionUID = 1L;
 	private Vector<JButtonEventListener> m_Listeners = new Vector<JButtonEventListener>();
@@ -172,5 +174,31 @@ public class JPanelArticoli extends JPanel{
 			pnlPulsanti.setLayout(new GridBagLayout());
 		}
 		return pnlPulsanti;
+	}
+
+	@Override
+	public String getNomeTabella() {
+		return null;
+	}
+
+	@Override
+	public void rowStateChange(RowEvent re) {
+	}
+
+	@Override
+	public void stateChange() {
+		if ( idPannello != -1 ){
+			PannelliHome.getInstance().begin();
+			try {
+				caricaArticoli(new LinkedList(PannelliHome.getInstance().findById(idPannello).getArticolos()));
+			} catch (FindByNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public void stateChange(DBEvent dbe) {
+		stateChange();
 	}
 }
