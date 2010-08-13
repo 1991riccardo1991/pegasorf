@@ -7,12 +7,10 @@ package rf.pegaso.db.tabelle;
 
 import it.infolabs.hibernate.ArticoloHome;
 import it.infolabs.hibernate.CodiciIvaHome;
-import it.infolabs.hibernate.FornitoreHome;
 import it.infolabs.hibernate.PannelliHome;
 import it.infolabs.hibernate.RepartoHome;
 import it.infolabs.hibernate.UmHome;
 import it.infolabs.hibernate.exception.FindByNotFoundException;
-import it.infolabs.hibernate.exception.PersistEntityException;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -51,12 +49,10 @@ public class Articolo {
 		rs = st.executeQuery();
 		rs.next();
 		int qta = 0;
-		boolean trovato = false;
 		if (rs.getRow() < 1) {
-			trovato = false;
 			qta = 0;
-		} else {
-			trovato = true;
+		}
+		else {
 			qta = rs.getInt(1);
 		}
 		if (st != null)
@@ -672,7 +668,11 @@ public class Articolo {
 		art.setDataInserimento(dataInserimento);
 		art.setCaricoIniziale((long)caricoIniziale);
 		art.setScortaMassima((long)scortaMassima);
-		art.setPannelli(PannelliHome.getInstance().findById(idPannello));
+		try {
+			art.setPannelli(PannelliHome.getInstance().findById(idPannello));
+		} catch (FindByNotFoundException e) {
+			e.printStackTrace();
+		}
 		ArticoloHome.getInstance().begin();
 		ArticoloHome.getInstance().persist(art);
 		dbm.notifyDBStateChange();
@@ -896,7 +896,11 @@ public class Articolo {
 		art.setDataInserimento(dataInserimento);
 		art.setCaricoIniziale((long)caricoIniziale);
 		art.setScortaMassima((long)scortaMassima);
-		art.setPannelli(PannelliHome.getInstance().findById(idPannello));
+		try {
+			art.setPannelli(PannelliHome.getInstance().findById(idPannello));
+		} catch (FindByNotFoundException e) {
+			e.printStackTrace();
+		}
 		ArticoloHome.getInstance().begin();
 		ArticoloHome.getInstance().persist(art);
 		ArticoloHome.getInstance().commit();
@@ -989,12 +993,9 @@ public class Articolo {
 		rs = st.executeQuery();
 		rs.next();
 		int qta = 0;
-		boolean trovato = false;
 		if (rs.getRow() < 1) {
-			trovato = false;
 			qta = -1;
 		} else {
-			trovato = true;
 			qta = rs.getInt(1);
 		}
 		if (st != null)
@@ -1013,12 +1014,9 @@ public class Articolo {
 		rs = st.executeQuery();
 		rs.next();
 		double qta = 0;
-		boolean trovato = false;
 		if (rs.getRow() < 1) {
-			trovato = false;
 			qta = -1;
 		} else {
-			trovato = true;
 			qta = rs.getDouble(1);
 		}
 		if (st != null)
