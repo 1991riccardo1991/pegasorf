@@ -21,7 +21,7 @@ import rf.utility.db.eccezzioni.IDNonValido;
  *
  */
 public class Carico {
-	private int iva_doc = 0;
+	private int iva_doc = 1;
 
 	/**
 	 * @param dbm2
