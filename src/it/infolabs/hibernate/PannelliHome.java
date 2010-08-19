@@ -1,17 +1,15 @@
 package it.infolabs.hibernate;
 // Generated 26-ago-2009 22.04.12 by Hibernate Tools 3.2.5.Beta
 
-import static org.hibernate.criterion.Example.create;
+import it.infolabs.hibernate.exception.FindAllEntityException;
+import it.infolabs.hibernate.exception.FindByNotFoundException;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.naming.InitialContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.hibernate.LockMode;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Example;
 
 /**
@@ -95,7 +93,7 @@ public class PannelliHome extends BusinessObjectHome {
 		}
 	}
 
-	public Pannelli findById(long id) {
+	public Pannelli findById(long id) throws FindByNotFoundException{
 		log.debug("getting Pannelli instance with id: " + id);
 		try {
 			Pannelli instance = (Pannelli) sessionFactory.getCurrentSession()
@@ -108,7 +106,7 @@ public class PannelliHome extends BusinessObjectHome {
 			return instance;
 		} catch (RuntimeException re) {
 			log.error("get failed", re);
-			throw re;
+			throw new FindByNotFoundException();
 		}
 	}
 
@@ -131,7 +129,7 @@ public class PannelliHome extends BusinessObjectHome {
 	 * Ritorna tutti i pannelli da visualizzare
 	 * @return
 	 */
-	public ArrayList<Pannelli> allPannelli() {		
+	public ArrayList<Pannelli> allPannelli() throws FindAllEntityException{		
 		log.debug("finding all Pannelli.");
 		try {
 			ArrayList<Pannelli> results = (ArrayList<Pannelli>) sessionFactory.
@@ -142,7 +140,7 @@ public class PannelliHome extends BusinessObjectHome {
 			return results;
 		} catch (RuntimeException re) {
 			log.error("finding all Pannelli failed", re);
-			throw re;
+			throw new FindAllEntityException();
 		}
 	}
 }
