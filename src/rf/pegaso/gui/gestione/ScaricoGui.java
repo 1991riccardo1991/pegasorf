@@ -82,6 +82,7 @@ import rf.pegaso.db.tabelle.Fornitore;
 import rf.pegaso.db.tabelle.Scarico;
 import rf.pegaso.db.tabelle.exception.NumeroOrdineEsistente;
 import rf.pegaso.gui.utility.ModificaQuantitaRiga;
+import rf.utility.Constant;
 import rf.utility.ControlloDati;
 import rf.utility.db.DBManager;
 import rf.utility.db.UtilityDBManager;
@@ -799,8 +800,8 @@ public class ScaricoGui extends JFrame implements TableModelListener {
 				lblDataCarico.setBounds(new Rectangle(145, 8, 83, 25)); // Generated
 				lblDataCarico.setText("Data Scarico"); // Generated
 				lblNumeroCarico = new JLabel();
-				lblNumeroCarico.setBounds(new Rectangle(9, 8, 65, 25)); // Generated
-				lblNumeroCarico.setText("N° Scarico"); // Generated
+				lblNumeroCarico.setBounds(new Rectangle(9, 8, 70, 25)); // Generated
+				lblNumeroCarico.setText("N. Scarico"); // Generated
 				pnlNord = new JPanel();
 				pnlNord.setLayout(null); // Generated
 				pnlNord.setPreferredSize(new Dimension(1, 330)); // Generated
@@ -1314,6 +1315,7 @@ public class ScaricoGui extends JFrame implements TableModelListener {
 			c.setDataDocumento(new java.sql.Date(dataDocumento.getDate().getTime()));
 			c.setNumDocumento(txtNumDocumento.getText());
 			c.setIdDocumento(0);
+			c.setIvaDocumento(Constant.getCodiceIva20());
 			if (!c.isInsert(new Integer(txtNumeroScarico.getText()).intValue())) {
 
 				if(Scarico.isNumeroOrdineEsistente(txtNumDocumento.getText())){
@@ -1382,7 +1384,7 @@ public class ScaricoGui extends JFrame implements TableModelListener {
 							JOptionPane.INFORMATION_MESSAGE);
 					return;
 				} else {
-					c.insertArticolo(a.getIdArticolo(), ((Number)txtQta.getValue()).doubleValue(), 0,0,0,0);
+					c.insertArticolo(a.getIdArticolo(), ((Number)txtQta.getValue()).doubleValue(), 0, 0, 0, Constant.getCodiceIva20());
 
 				}
 
