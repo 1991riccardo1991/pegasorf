@@ -1603,16 +1603,12 @@ public class CaricoGui extends JFrame implements TableModelListener {
 				if(Carico.isNumeroCaricoEsistente(txtNumDocumento.getText())){
 					throw new NumeroCaricoEsistente();
 				}
-				c.setIdCarico((new Integer(txtNumeroCarico.getText()))
-						.intValue());
-				c
-						.setIdFornitore((new Integer(cmbFornitori
-								.getIDSelectedItem())).intValue());
+				c.setIdCarico((new Integer(txtNumeroCarico.getText())).intValue());
+				c.setIdFornitore((new Integer(cmbFornitori.getIDSelectedItem())).intValue());
 				c.setDataCarico(new Date(dataCarico.getDate().getTime()));
 				c.setDataDocumento(new Date(dataDocumento.getDate().getTime()));
 				c.setNumDocumento(txtNumDocumento.getText());
-				c.setIdDocumento((new Integer(cmbTipoDocumento
-						.getIDSelectedItem())).intValue());
+				c.setIdDocumento((new Integer(cmbTipoDocumento.getIDSelectedItem())).intValue());
 				c.setOraCarico(new Time((new java.util.Date()).getTime()));
 				c.setNote(txtNote.getText());
 				c.setInsertByPN(0);
