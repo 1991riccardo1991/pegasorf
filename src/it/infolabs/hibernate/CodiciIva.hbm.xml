@@ -11,8 +11,8 @@
         <property name="codice" type="string">
             <column name="codice" length="3" not-null="true" />
         </property>
-        <property name="percentuale" type="double">
-            <column name="percentuale" precision="17" scale="17" not-null="true" />
+        <property name="percentuale" type="long">
+            <column name="percentuale" not-null="true" />
         </property>
         <property name="descrizione" type="string">
             <column name="descrizione" length="30" />
