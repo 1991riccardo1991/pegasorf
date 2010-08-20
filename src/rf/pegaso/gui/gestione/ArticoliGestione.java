@@ -51,6 +51,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.AlternateRowHighlighter;
+
 import java.awt.Font;
 import java.awt.Color;
 
@@ -84,15 +87,8 @@ public class ArticoliGestione extends JFrame {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			if(e.getSource()==tblArticoli && e.getClickCount()==2){
-				if ( modalita == RICERCA ){
-					int riga = tblArticoli.getSelectedRow();
-					padre.inserisciNelCarrello((String)tblArticoli.getValueAt(riga, 1));
-					dispose();
-				}
-				else{
-					modificaArticolo();
-				}
+			if (e.getSource() == tblArticoli && e.getClickCount() == 2) {
+				modificaArticolo();				
 			}
 		}
 		
@@ -124,7 +120,7 @@ public class ArticoliGestione extends JFrame {
 
 	private JPanel pnlNord = null;
 
-	private JTable tblArticoli = null;
+	private JXTable tblArticoli = null;
 
 	private JButton btnDuplica = null;
 
@@ -478,8 +474,9 @@ public class ArticoliGestione extends JFrame {
 				}
 				dbm.addDBStateChange(modello);
 				sorter=new TableRowSorter<ArticoloModel>(modello);
-				tblArticoli = new JTable(modello);
+				tblArticoli = new JXTable(modello);
 				tblArticoli.setRowSorter(sorter);
+				tblArticoli.setHighlighters(new AlternateRowHighlighter());
 				// tblArticoli.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 				tblArticoli.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
