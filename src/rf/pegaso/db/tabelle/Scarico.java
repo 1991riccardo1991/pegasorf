@@ -13,6 +13,7 @@ import java.util.Vector;
 
 import rf.pegaso.db.exception.ResultSetVuoto;
 import rf.pegaso.db.tabelle.exception.NumeroOrdineEsistente;
+import rf.utility.Constant;
 import rf.utility.db.DBManager;
 import rf.utility.db.eccezzioni.IDNonValido;
 
@@ -352,7 +353,7 @@ public class Scarico {
 		try {
 			if (!Scarico.isOrderExsist(idScarico)) {
 
-				String update = "insert into scarico values (?,?,?,?,?)";
+				String update = "insert into scarico values (?,?,?,?,?,?,?,?,?,?)";
 				// preleviamo la data di inserimento
 				// e la impostiamo nelle proprietà
 				java.util.Date data = new java.util.Date();
@@ -365,6 +366,11 @@ public class Scarico {
 					pst.setDate(3, dataScarico);
 					pst.setTime(4, oraScarico);
 					pst.setString(5, note);
+					pst.setInt(6, 0);
+					pst.setString(7, "");
+					pst.setDate(8, null);
+					pst.setDouble(9, 0);
+					pst.setInt(10, Constant.getCodiceIva20());
 					ok = pst.executeUpdate();
 				} catch (SQLException e) {
 					e.printStackTrace();
