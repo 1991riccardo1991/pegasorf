@@ -12,6 +12,7 @@ import it.infolabs.hibernate.ImmagineArticoloHome;
 import it.infolabs.hibernate.Pannelli;
 import it.infolabs.hibernate.PannelliHome;
 import it.infolabs.hibernate.RepartoHome;
+import it.infolabs.hibernate.Um;
 import it.infolabs.hibernate.UmHome;
 import it.infolabs.hibernate.exception.FindAllEntityException;
 import it.infolabs.hibernate.exception.FindByNotFoundException;
@@ -1629,7 +1630,6 @@ public class ArticoloAddMod extends JFrame implements PropertyChangeListener,Win
 		try {
 			pannelli = PannelliHome.getInstance().allPannelli();
 		} catch (FindAllEntityException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String [] allPannelli = new String[pannelli.size()];
@@ -1842,7 +1842,8 @@ public class ArticoloAddMod extends JFrame implements PropertyChangeListener,Win
 		// anche un oggetto vuoto
 		pos--;
 		int cod = new Integer(codUnitaDiMisura[pos]);
-		a.setUm(UmHome.getInstance().findById(cod));
+		Um um = UmHome.getInstance().findById(cod);
+		a.setUm(um);
 
 		a.setDescrizione(txtDescrizione.getText());
 		// controllo se è stato selezionato il
@@ -1887,9 +1888,10 @@ public class ArticoloAddMod extends JFrame implements PropertyChangeListener,Win
 			a.setPannelli(null);
 		}
 		
-		CodiciIvaHome.getInstance().begin();
+		CodiciIvaHome.getInstance().begin();		
 		cod = new Integer(codCodiceIva[(cmbCodiciIva.getSelectedIndex() - 1)]);
-		a.setCodiciIva(CodiciIvaHome.getInstance().findById(cod));
+		CodiciIva iva = CodiciIvaHome.getInstance().findById(cod);
+		a.setCodiciIva(iva);
 
 		try {
 			if (txtPrezzoAcquisto.getText().equalsIgnoreCase("")) {
@@ -2243,6 +2245,12 @@ public class ArticoloAddMod extends JFrame implements PropertyChangeListener,Win
 		if (cmbCodiciIva == null) {
 			cmbCodiciIva = new JComboBox();
 			cmbCodiciIva.setBounds(new Rectangle(147, 111, 80, 20));
+			cmbCodiciIva.addItemListener(new java.awt.event.ItemListener() {
+				public void itemStateChanged(java.awt.event.ItemEvent e) {
+					calcoloPercentualeRicarico();
+					calcolaPrezzoPubblico();
+				}
+			});
 		}
 		return cmbCodiciIva;
 	}
