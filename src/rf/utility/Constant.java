@@ -13,6 +13,7 @@ public class Constant {
 	public static final int REPARTO_GRATTA_E_VINCI = 4;
 	public static final int UNITA_MISURA_PEZZI = 2;
 	public static final int CARICO_INIZIALE = 0;
+	public static final int CODICE_IVA_20 = 1;
 	
 	public static int getOrdine() {
 		return ORDINE;
@@ -56,5 +57,9 @@ public class Constant {
 
 	public static int getCaricoIniziale() {
 		return CARICO_INIZIALE;
+	}
+	
+	public static int getCodiceIva20() {
+		return CODICE_IVA_20;
 	}
 }
