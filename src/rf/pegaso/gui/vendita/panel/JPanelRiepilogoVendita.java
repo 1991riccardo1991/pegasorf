@@ -470,7 +470,7 @@ public class JPanelRiepilogoVendita extends JPanel {
 			// Salviamo i dati della fattura
 			Date d = new Date();
 			scarico.setIdScarico(DBManager.getIstanceSingleton().getNewID(
-					"ordini", "idordine"));
+					"scarico", "idordine"));
 			scarico.setIdCliente(0);
 			scarico.setOraScarico(new Time(d.getTime()));
 			scarico.setDataScarico(new java.sql.Date(d.getTime()));
@@ -478,6 +478,7 @@ public class JPanelRiepilogoVendita extends JPanel {
 			scarico.setDataDocumento(new java.sql.Date(d.getTime()));
 			scarico.setNumDocumento(Constant.getNumeroDocScaricoAlBanco());
 			scarico.setIdDocumento(0);
+			scarico.setIvaDocumento(Constant.CODICE_IVA_20);
 			scarico.setTotaleDocumentoIvato(totaleCarrello);
 			// scarico.setTipoPrezzo((String)cmbTipoPagamento.getSelectedItem());
 			scarico.setDocFiscale(Constant.getScarico());
