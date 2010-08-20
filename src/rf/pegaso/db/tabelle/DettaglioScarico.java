@@ -162,7 +162,7 @@ public class DettaglioScarico implements Comparator<DettaglioScarico>{
 				prezzoAcquisto = a.getPrezzoAcquisto();
 				prezzoVendita = a.getPrezzoDettaglio();
 				codiceBarre = a.getCodbarre();
-				iva = (long)a.getCodiciIva().getPercentuale();
+				iva = (long)a.getCodiciIva().getId();//.getPercentuale();
 				qta = 1.0;
 				qtaInfinita = a.getQtaInfinita();
 				disponibilita = (Double)obj[1];
@@ -271,7 +271,7 @@ public class DettaglioScarico implements Comparator<DettaglioScarico>{
 	public boolean isInsert() throws SQLException{
 		Statement st = dbm.getNewStatement();
 		ResultSet rs = null;
-		String query = "select * from dettaglio_ordini where idordine=" + idOrdine +"and idarticolo="+idArticolo;
+		String query = "select * from dettaglio_scarico where idordine=" + idOrdine +"and idarticolo="+idArticolo;
 		rs = st.executeQuery(query);
 		rs.last();
 		int nRow = rs.getRow();
@@ -299,7 +299,7 @@ public class DettaglioScarico implements Comparator<DettaglioScarico>{
 	public int insert(){
 		PreparedStatement pst = null;
 		try{
-			String insert = "insert into dettaglio_ordini values (?,?,?,?,?,?,?)";
+			String insert = "insert into dettaglio_scarico values (?,?,?,?,?,?,?)";
 
 			pst = dbm.getNewPreparedStatement(insert);
 			pst.setInt(2, idArticolo);
@@ -343,7 +343,7 @@ public class DettaglioScarico implements Comparator<DettaglioScarico>{
 //			while ( rs.next() ){
 //				qtaIniziale = rs.getDouble("qta");
 //			}
-			String insert = "update dettaglio_ordini set qta=?,prezzo_acquisto=?,prezzo_vendita=?,sconto=? where idordine=? and idarticolo=?";
+			String insert = "update dettaglio_scarico set qta=?,prezzo_acquisto=?,prezzo_vendita=?,sconto=? where idordine=? and idarticolo=?";
 			pst = dbm.getNewPreparedStatement(insert);
 			pst.setDouble(1, qta);
 			pst.setDouble(2, prezzoAcquisto);
@@ -378,8 +378,8 @@ public class DettaglioScarico implements Comparator<DettaglioScarico>{
 	public int updatePrezzoVenditaPerArticoliReparto(){
 		PreparedStatement pst = null;
 		try{
-			String update = "update dettaglio_ordini " +
-					"set prezzo_vendita=((select prezzo_vendita from dettaglio_ordini where idordine=? and idarticolo=?) + ?) " +
+			String update = "update dettaglio_scarico " +
+					"set prezzo_vendita=((select prezzo_vendita from dettaglio_scarico where idordine=? and idarticolo=?) + ?) " +
 					"where idordine=? and idarticolo=? ";
 			pst = dbm.getNewPreparedStatement(update);
 			pst.setInt(1, idOrdine);
@@ -413,7 +413,7 @@ public class DettaglioScarico implements Comparator<DettaglioScarico>{
 		Vector<DettaglioScarico> dettaglioVendite = new Vector<DettaglioScarico>();
 		Statement st = null;
 		ResultSet rs = null;
-		String query = "select * from dettaglio_ordini where idordine=" + id;
+		String query = "select * from dettaglio_scarico where idordine=" + id;
 		st = dbm.getNewStatement();
 		rs = st.executeQuery(query);
 		while( rs.next()) {
