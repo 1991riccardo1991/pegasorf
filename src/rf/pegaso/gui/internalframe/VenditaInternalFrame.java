@@ -1,12 +1,14 @@
 package rf.pegaso.gui.internalframe;
 
-import it.infolabs.hibernate.Reparto;
-import it.infolabs.hibernate.RepartoHome;
+import it.infolabs.hibernate.Articolo;
+import it.infolabs.hibernate.Pannelli;
+import it.infolabs.hibernate.PannelliHome;
 import it.infolabs.hibernate.exception.FindAllEntityException;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 
@@ -24,13 +26,13 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
 import rf.pegaso.db.tabelle.DettaglioScarico;
-import rf.pegaso.gui.gestione.ArticoliGestione;
-import rf.pegaso.gui.vendita.JPanelFattura;
 import rf.pegaso.gui.vendita.panel.JButtonEvent;
 import rf.pegaso.gui.vendita.panel.JButtonEventListener;
 import rf.pegaso.gui.vendita.panel.JPanelArticoli;
 import rf.pegaso.gui.vendita.panel.JPanelRiepilogoVendita;
 import rf.utility.ControlloDati;
+import rf.utility.MathUtility;
+import rf.utility.db.DBManager;
 import rf.utility.gui.text.UpperTextDocument;
 
 import java.awt.Font;
@@ -108,17 +110,14 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
     
     // Variabile che contiene l'importo digitato da tastiera
     private String importo = "";  //  @jve:decl-index=0:
-	private JPanelArticoli pnlReparti = null;
+	private JTabbedPane jTabbedPane = null;
 	private JTabbedPane tbdPnCarrelli = null;
 	private JPanel pnlRiepilogo = null;
 	private JButton btnStorno1 = null;
-	private VenditaInternalFrame frame;
-	private JFrame padre = null;
 //	private LinkedList<JPanelRiepilogoVendita> listaPannelliRiepilogo = null;
 //	private int numCasse = 0;
 
 	public VenditaInternalFrame(JFrame padre) {
-		this.padre = padre;
 		initialize();
 	}
 
@@ -131,13 +130,10 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 		this.setClosable(true);
 		this.setIconifiable(true);
 		this.setContentPane(getJContentPane());
-		this.frame = this;
 		initializeCarrello();
+		initializePannelliRapidi();
 		txtFieldRicerca.requestFocus();
 		pannelloCarrello.addTableModelListener(this);
-		JPanelFattura fatt = new JPanelFattura(padre);
-		pnlContenitore.add(fatt, "fatt");
-		((CardLayout) pnlContenitore.getLayout()).show(pnlContenitore, "fatt");
 	}
 	
 	private void initializeCarrello(){
@@ -153,11 +149,43 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 		pannelloCarrello.setVisible(true);
 	}
 	
+	private void initializePannelliRapidi(){
+		try {
+			for ( Pannelli pan : PannelliHome.getInstance().allPannelli() ){
+				if ( pan.getArticolos().size() > 0 ){
+					JPanelArticoli pnlArticolo = new JPanelArticoli(new Integer((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()) - 650);
+					pnlArticolo.caricaArticoli(new LinkedList<Articolo>(pan.getArticolos()));
+					pnlArticolo.addJButtonEventListener(new JButtonEventListener() {
+						public void keyPerformed(JButtonEvent evt) {
+							inserisciNelCarrello(evt.getArticolo().getCodbarre());
+						}
+					});
+					DBManager.getIstanceSingleton().addDBStateChange(pnlArticolo);
+					jTabbedPane.addTab(pan.getNome(), null, pnlArticolo, null);
+				}
+			}
+		} catch (HeadlessException e) {
+			e.printStackTrace();
+			messaggioAVideo("Si \u00E8 verificato un errore inaspettato!!!", "ERRORE");
+		} catch (FindAllEntityException e) {
+			e.printStackTrace();
+			messaggioAVideo("Si \u00E8 verificato un errore inaspettato!!!", "ERRORE");
+		}
+	}
+	
 	private void inserisciDaRepo(String repo){
 		try {
 			DettaglioScarico dv = new DettaglioScarico();
 			dv.loadRepartoByCB(repo);
-			dv.setPrezzoVendita(ControlloDati.convertPrezzoToDouble(ControlloDati.costruisciPrezzoLikePOS(importo)));
+			double prezzo = ControlloDati.convertPrezzoToDouble(ControlloDati.costruisciPrezzoLikePOS(importo));
+			if (repo.equals("REPARTO 5")){
+				dv.setPrezzoVendita(prezzo);
+				dv.setIva(0);
+			}
+			else {
+				dv.setPrezzoVendita(prezzo-MathUtility.scontoPercentuale(prezzo, 16.666666666666667));
+				dv.setIva(20);
+			}
 			if ( txtQta.getText().trim().equals("")){
 				dv.setQta(1);
 			}
@@ -165,7 +193,6 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 				dv.setQta(Double.valueOf(txtQta.getText().trim()));
 			}
 			dv.setDisponibilita(dv.getQta());
-			dv.setIva(0);
 			pannelloCarrello.addDettaglioOrdine(dv, true);
 			txtFldTotale.setText(ControlloDati.convertDoubleToPrezzo(pannelloCarrello.getTotaleCarrello()));
 			aggiornaResto();
@@ -181,7 +208,7 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 		}
 	}
 	
-	public void inserisciNelCarrello(String codeBarre){
+	private void inserisciNelCarrello(String codeBarre){
 		if ( codeBarre == null || codeBarre.trim().equals("") ){
 			messaggioAVideo("Codice inserito non valido!", "INFO");
 		}
@@ -215,10 +242,7 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 		}
 	}
 	
-	private void elaboraScontrino(boolean scontrino, boolean pagato){
-		if( !pagato ){
-			
-		}
+	private void elaboraScontrino(boolean scontrino){
 		if ( pannelloCarrello.registraScarico(scontrino) ){
 			messaggioAVideo("Vendita effettuata con successo", "INFO");
 			resetGUI();
@@ -228,6 +252,8 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 		}
 		txtFieldRicerca.requestFocusInWindow();
 	}
+	
+	
 
 	//inizializza o resetta le variabili iniziali di sistema
 	 private void stateToZero(){
@@ -395,7 +421,7 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 				inserisciDaRepo("REPARTO 1");
 			}
 			else if ( e.getSource() == btnRep2 ){
-				inserisciDaRepo("REPARTO 2");
+				inserisciDaRepo("REPARTO 5");
 			}
 			else if ( e.getSource() == btnRep3 ){
 				inserisciDaRepo("REPARTO 3");
@@ -408,10 +434,10 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 			}
 			else if ( e.getSource() == btnElaboraScontrino ){
 				// Registriamo la vendita
-				elaboraScontrino(false, false);
+				elaboraScontrino(false);
 			}
 			else if(e.getSource()==btnElaboraScontrinoFiscale){
-				elaboraScontrino(true, true);
+				elaboraScontrino(true);
 			}
 			else if ( e.getSource() == btnContanti ){
 				if ( !tastieraCassaAttiva ){
@@ -517,7 +543,6 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 		im.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD9, 0), "9");
 
 		this.getRootPane().getActionMap().put("OK", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				if ( a.getSource() != txtFieldRicerca && tastieraCassaAttiva && !inserimentoContanti && importo.length() > 0 ){
 					inserisciDaRepo("REPARTO 1");
@@ -533,25 +558,21 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 			}
 		});
 		this.getRootPane().getActionMap().put("F1", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				txtFieldRicerca.requestFocusInWindow();				
 			}
 		});
 		this.getRootPane().getActionMap().put("F2", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
-				elaboraScontrino(false, false);
+				elaboraScontrino(false);
 			}
 		});
 		this.getRootPane().getActionMap().put("F1", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
-				elaboraScontrino(true, true);
+				elaboraScontrino(true);
 			}
 		});
 		this.getRootPane().getActionMap().put("F3", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				if ( !tastieraCassaAttiva ){
 					((CardLayout) pnlContenitore.getLayout()).show(pnlContenitore, "pnlFunzioniCassa");
@@ -568,38 +589,32 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 			}
 		});
 		this.getRootPane().getActionMap().put("F4", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				apriChiudiInserimentoManuale();
 			}
 		});
 		this.getRootPane().getActionMap().put("F5", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				
 			}
 		});
 		this.getRootPane().getActionMap().put("F8", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				annullaVendita();
 			}
 		});	
 		this.getRootPane().getActionMap().put("ESC", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				resetGUI();
 				doDefaultCloseAction();
 			}
 		});
 		this.getRootPane().getActionMap().put("CANC", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				stateTransition('\n');
 			}
 		});
 		this.getRootPane().getActionMap().put("+", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				if ( !inserimentoContanti ){
 					int qta = Integer.valueOf(txtQta.getText().equals("") ? "1" : txtQta.getText());
@@ -613,65 +628,63 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 //			}
 //		});
 		this.getRootPane().getActionMap().put("0", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				stateTransition('0');
 			}
 		});
 		this.getRootPane().getActionMap().put("1", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				stateTransition('1');
 			}
 		});
 		this.getRootPane().getActionMap().put("2", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				stateTransition('2');
 			}
 		});
 		this.getRootPane().getActionMap().put("3", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				stateTransition('3');
 			}
 		});
 		this.getRootPane().getActionMap().put("4", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				stateTransition('4');
 			}
 		});
 		this.getRootPane().getActionMap().put("5", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				stateTransition('5');
 			}
 		});
 		this.getRootPane().getActionMap().put("6", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				stateTransition('6');
 			}
 		});
 		this.getRootPane().getActionMap().put("7", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				stateTransition('7');
 			}
 		});
 		this.getRootPane().getActionMap().put("8", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				stateTransition('8');
 			}
 		});
 		this.getRootPane().getActionMap().put("9", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent a) {
 				stateTransition('9');
 			}
 		});
+	}
+	
+	private void m_jButtonKeysKeyPerformed(JButtonEvent evt) {
+			 DettaglioScarico dv = new DettaglioScarico();
+             dv.loadByID((int)evt.getArticolo().getIdarticolo());
+             if ( pannelloCarrello.addDettaglioOrdine(dv, false) == -1){
+ 				messaggioAVideo("Quantita' richiesta non disponibile.", "INFO");
+ 			} 			
 	}
 
 	private void apriChiudiInserimentoManuale(){
@@ -1068,7 +1081,7 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 		if (btnRep2 == null) {
 			btnRep2 = new JButton();
 			btnRep2.setBounds(new Rectangle(310, 295, 75, 70));
-			btnRep2.setText("Repo2");
+			btnRep2.setText("Repo5");
 			btnRep2.addActionListener(new MyButtonListener());
 		}
 		return btnRep2;
@@ -1085,6 +1098,7 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 			btnRep3.setBounds(new Rectangle(310, 215, 75, 70));
 			btnRep3.setText("Repo3");
 			btnRep3.addActionListener(new MyButtonListener());
+			btnRep3.setVisible(false);
 		}
 		return btnRep3;
 	}
@@ -1100,6 +1114,7 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 			btnRep4.setBounds(new Rectangle(310, 135, 75, 70));
 			btnRep4.setText("Repo4");
 			btnRep4.addActionListener(new MyButtonListener());
+			btnRep4.setVisible(false);
 		}
 		return btnRep4;
 	}
@@ -1199,7 +1214,7 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 			pnlContenitore = new JPanel();
 			pnlContenitore.setLayout(new CardLayout());
 			pnlContenitore.setPreferredSize(new Dimension(new Integer((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()) - 620, 550));
-			pnlContenitore.add(getPnlReparti(), getPnlReparti().getName());
+			pnlContenitore.add(getJTabbedPane(), getJTabbedPane().getName());
 			pnlContenitore.add(getPnlFunzioniCassa(), getPnlFunzioniCassa().getName());
 		}
 		return pnlContenitore;
@@ -1273,7 +1288,7 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 		if (btnElaboraScontrino == null) {
 			btnElaboraScontrino = new JButton();
 			btnElaboraScontrino.setBounds(new Rectangle(390, 25, 130, 50));
-			btnElaboraScontrino.setText("<html>Stampa <p>Sospesa(F2)</html>");
+			btnElaboraScontrino.setText("<html>Stampa (F2)</html>");
 			btnElaboraScontrino.addActionListener(new MyButtonListener());
 			
 		}
@@ -1300,26 +1315,13 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 	 * 	
 	 * @return javax.swing.JTabbedPane	
 	 */
-	private JPanel getPnlReparti() {
-		if (pnlReparti == null) {
-			try{
-			pnlReparti = new JPanelArticoli(new Integer((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()) - 650);
-			pnlReparti.setName("pnlReparti");
-			RepartoHome.getInstance().begin();
-			pnlReparti.caricaReparti(new LinkedList<Reparto>(RepartoHome.getInstance().AllReparti()));
-			pnlReparti.addJButtonEventListener(new JButtonEventListener() {
-				public void keyPerformed(JButtonEvent evt) {
-					ArticoliGestione ges = new ArticoliGestione(frame, evt.getReparto());
-					ges.setVisible(true);
-					//apriElencoArticoliReparto(evt.getReparto());
-				}
-			});
-			}
-			catch (FindAllEntityException e) {
-				e.printStackTrace();
-			}
+	private JTabbedPane getJTabbedPane() {
+		if (jTabbedPane == null) {
+			jTabbedPane = new JTabbedPane();
+			jTabbedPane.setName("pnlArticoli");
+			jTabbedPane.setPreferredSize(new Dimension(new Integer((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()) - 620, 600));
 		}
-		return pnlReparti;
+		return jTabbedPane;
 	}
 	
 
