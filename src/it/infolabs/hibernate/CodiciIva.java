@@ -12,7 +12,7 @@ public class CodiciIva implements java.io.Serializable {
 
 	private long id;
 	private String codice;
-	private double percentuale;
+	private long percentuale;
 	private String descrizione;
 	private String descrizioneBreve;
 	private Set<DettaglioDocumento> dettaglioDocumentos = new HashSet<DettaglioDocumento>(
@@ -28,13 +28,13 @@ public class CodiciIva implements java.io.Serializable {
 	public CodiciIva() {
 	}
 
-	public CodiciIva(long id, String codice, double percentuale) {
+	public CodiciIva(long id, String codice, long percentuale) {
 		this.id = id;
 		this.codice = codice;
 		this.percentuale = percentuale;
 	}
 
-	public CodiciIva(long id, String codice, double percentuale,
+	public CodiciIva(long id, String codice, long percentuale,
 			String descrizione, String descrizioneBreve,
 			Set<DettaglioDocumento> dettaglioDocumentos, Set<Carico> caricos,
 			Set<DettaglioScarico> dettaglioScaricos, Set<Scarico> scaricos,
@@ -69,11 +69,11 @@ public class CodiciIva implements java.io.Serializable {
 		this.codice = codice;
 	}
 
-	public double getPercentuale() {
+	public long getPercentuale() {
 		return this.percentuale;
 	}
 
-	public void setPercentuale(double percentuale) {
+	public void setPercentuale(long percentuale) {
 		this.percentuale = percentuale;
 	}
 
