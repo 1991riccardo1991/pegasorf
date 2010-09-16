@@ -120,7 +120,7 @@ public class ArticoliGestione extends JFrame {
 
 	private JPanel pnlNord = null;
 
-	private JXTable tblArticoli = null;
+	private JTable tblArticoli = null;
 
 	private JButton btnDuplica = null;
 
@@ -474,9 +474,9 @@ public class ArticoliGestione extends JFrame {
 				}
 				dbm.addDBStateChange(modello);
 				sorter=new TableRowSorter<ArticoloModel>(modello);
-				tblArticoli = new JXTable(modello);
+				tblArticoli = new JTable(modello);
 				tblArticoli.setRowSorter(sorter);
-				tblArticoli.setHighlighters(new AlternateRowHighlighter());
+//				tblArticoli.setHighlighters(new AlternateRowHighlighter());
 				// tblArticoli.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 				tblArticoli.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);

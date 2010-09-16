@@ -1,5 +1,7 @@
 package rf.pegaso.gui.vendita.panel;
 
+import it.infolabs.hibernate.CodiciIva;
+import it.infolabs.hibernate.CodiciIvaHome;
 import it.infolabs.pos.PosException;
 import it.infolabs.pos.Ticket;
 import it.infolabs.pos.TicketRow;
@@ -205,6 +207,10 @@ public class JPanelRiepilogoVendita extends JPanel {
 		public Object getValueAt(int r, int c) {
 			DettaglioScarico riga = carrello.get(r);
 			Object o = null;
+			
+			// Recuperiamo l'oggetto CodiceIva
+			CodiciIva codiceIva=CodiciIvaHome.getInstance().findById(riga.getIva());
+			
 
 			switch (c) {
 			case 0: {
@@ -220,14 +226,13 @@ public class JPanelRiepilogoVendita extends JPanel {
 				break;
 			}
 			case 3: {
-				o = new Long(riga.getIva());
+				o = new Long(codiceIva.getPercentuale());
 				break;
 			}
 			case 4: {
 				double tot = riga.getPrezzoVendita() * riga.getQta();
 				tot = tot
-						+ MathUtility.percentualeDaAggiungere(tot, riga
-								.getIva());
+						+ MathUtility.percentualeDaAggiungere(tot, codiceIva.getPercentuale());
 				o = new Double(tot);
 				break;
 			}
@@ -410,8 +415,9 @@ public class JPanelRiepilogoVendita extends JPanel {
 		}
 		// notifichiamo che e' stata aggiunta/modificata una riga;
 		// modello.fireTableRowsInserted(carrello.size(), carrello.size());
+		CodiciIva codiceIva=CodiciIvaHome.getInstance().findById(ord.getIva());
 		double tot = ord.getPrezzoVendita() * ord.getQta();
-		tot = tot + MathUtility.percentualeDaAggiungere(tot, ord.getIva());
+		tot = tot + MathUtility.percentualeDaAggiungere(tot, codiceIva.getPercentuale());
 		totaleCarrello = totaleCarrello + tot;
 		modello.fireTableDataChanged();
 		return 1;
