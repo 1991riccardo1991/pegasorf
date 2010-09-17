@@ -43,38 +43,13 @@ import rf.pegaso.gui.InitialGUI;
 import rf.utility.Constant;
 import rf.utility.ControlloDati;
 import rf.utility.MathUtility;
+import rf.utility.collection.MyArrayList;
 import rf.utility.db.DBManager;
 import rf.utility.db.UtilityDBManager;
 
 public class JPanelRiepilogoVendita extends JPanel {
 
-	class MyArrayList extends ArrayList<DettaglioScarico> {
-
-		@Override
-		public boolean contains(Object o) {
-			for (DettaglioScarico ord : carrello) {
-				if (ord.getIdArticolo() == ((DettaglioScarico) o)
-						.getIdArticolo())
-					return true;
-			}
-			return false;
-		}
-
-		@Override
-		public int indexOf(Object o) {
-			if (o == null) {
-				for (int i = 0; i < carrello.size(); i++)
-					if (carrello.get(i) == null)
-						return i;
-			} else {
-				for (int i = 0; i < carrello.size(); i++)
-					if (((DettaglioScarico) o).getIdArticolo() == carrello
-							.get(i).getIdArticolo())
-						return i;
-			}
-			return -1;
-		}
-	}
+	
 
 	class PrezzoCellRenderer extends DefaultTableCellRenderer {
 		private static final long serialVersionUID = 1L;
@@ -612,6 +587,10 @@ public class JPanelRiepilogoVendita extends JPanel {
 	 */
 	public DettaglioScarico[] toArray() {
 		return (DettaglioScarico[]) carrello.toArray();
+	}
+	
+	public MyArrayList getCarrello(){
+		return this.carrello;
 	}
 
 	// gestire i casi di aggiornamento negativo

@@ -20,9 +20,6 @@
             <key-property name="note" type="string">
                 <column name="note" />
             </key-property>
-            <key-property name="codbarre" type="string">
-                <column name="codice" />
-            </key-property>
         </composite-id>
     </class>
 </hibernate-mapping>

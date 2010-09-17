@@ -4,10 +4,15 @@ package it.infolabs.hibernate;
 
 import it.infolabs.hibernate.exception.FindAllEntityException;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.LockMode;
 import org.hibernate.criterion.Order;
+
+import rf.utility.db.DBManager;
 
 import static org.hibernate.criterion.Example.create;
 
@@ -135,5 +140,27 @@ public class ClienteHome extends BusinessObjectHome{
 			log.error("find All Cliente failed", re);
 			throw re;
 		}
+	}
+
+	public String[] allClienti() throws SQLException {
+		String[] o = null;
+		ResultSet rs = null;
+		Statement pst = null;
+		String query = "select idcliente || ' - ' || cognome || ' ' || nome from cliente order by cognome,nome";
+		pst = DBManager.getIstanceSingleton().getNewStatement();
+		rs = pst.executeQuery(query);
+		rs.last();
+		o = new String[rs.getRow()];
+		rs.beforeFirst();
+		int pos = 0;
+		while (rs.next()) {
+			o[pos] = rs.getString(1);
+			pos++;
+		}
+		if (pst != null)
+			pst.close();
+		if (rs != null)
+			rs.close();
+		return o;
 	}
 }

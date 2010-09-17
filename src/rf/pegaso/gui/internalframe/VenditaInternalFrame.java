@@ -1,6 +1,8 @@
 package rf.pegaso.gui.internalframe;
 
 import it.infolabs.hibernate.Articolo;
+import it.infolabs.hibernate.Documento;
+import it.infolabs.hibernate.Fattura;
 import it.infolabs.hibernate.Pannelli;
 import it.infolabs.hibernate.PannelliHome;
 import it.infolabs.hibernate.exception.FindAllEntityException;
@@ -26,6 +28,7 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
 import rf.pegaso.db.tabelle.DettaglioScarico;
+import rf.pegaso.gui.vendita.FatturaImmediata;
 import rf.pegaso.gui.vendita.panel.JButtonEvent;
 import rf.pegaso.gui.vendita.panel.JButtonEventListener;
 import rf.pegaso.gui.vendita.panel.JPanelArticoli;
@@ -116,6 +119,7 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 	private JButton btnStorno1 = null;
 //	private LinkedList<JPanelRiepilogoVendita> listaPannelliRiepilogo = null;
 //	private int numCasse = 0;
+	private JButton btnFatturaImmediata = null;
 
 	public VenditaInternalFrame(JFrame padre) {
 		initialize();
@@ -438,8 +442,10 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 			}
 			else if(e.getSource()==btnElaboraScontrinoFiscale){
 				elaboraScontrino(true);
-			}
-			else if ( e.getSource() == btnContanti ){
+			}else if(e.getSource()==btnFatturaImmediata){
+				emissioneFatturaImmediata();
+				
+			}else if ( e.getSource() == btnContanti ){
 				if ( !tastieraCassaAttiva ){
 					((CardLayout) pnlContenitore.getLayout()).show(pnlContenitore, "pnlFunzioniCassa");
 					btnInsManuale.setSelected(false);
@@ -679,6 +685,13 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 		});
 	}
 	
+	public void emissioneFatturaImmediata() {
+		Documento documento=new Documento();
+		Fattura fattura=new Fattura(documento);
+		FatturaImmediata ftImmediata=new FatturaImmediata(pannelloCarrello.getCarrello(),fattura);
+		ftImmediata.setVisible(true);
+	}
+
 	private void m_jButtonKeysKeyPerformed(JButtonEvent evt) {
 			 DettaglioScarico dv = new DettaglioScarico();
              dv.loadByID((int)evt.getArticolo().getIdarticolo());
@@ -754,7 +767,7 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 			lblCodiceProdotto.setText("Codice Prodotto");
 			pnlPulsantiFunzioni = new JPanel();
 			pnlPulsantiFunzioni.setLayout(null);
-			pnlPulsantiFunzioni.setPreferredSize(new Dimension(1000, 150));
+			pnlPulsantiFunzioni.setPreferredSize(new Dimension(1000, 200));
 			pnlPulsantiFunzioni.add(getBtnRicercaAvanzata(), null);
 			pnlPulsantiFunzioni.add(getTxtFieldRicerca(), null);
 			pnlPulsantiFunzioni.add(lblCodiceProdotto, null);
@@ -764,6 +777,7 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 			pnlPulsantiFunzioni.add(getTxtFldResto(), null);
 			pnlPulsantiFunzioni.add(getBtnElaboraScontrino(), null);
 			pnlPulsantiFunzioni.add(getBtnContanti(), null);
+			pnlPulsantiFunzioni.add(getBtnFatturaImmediata(), null);
 		}
 		return pnlPulsantiFunzioni;
 	}
@@ -1388,5 +1402,20 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 			aggiornaResto();
 		}
 		
+	}
+
+	/**
+	 * This method initializes btnFatturaImmediata	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getBtnFatturaImmediata() {
+		if (btnFatturaImmediata == null) {
+			btnFatturaImmediata = new JButton();
+			btnFatturaImmediata.setBounds(new Rectangle(240, 135, 130, 50));
+			btnFatturaImmediata.setText("<html>Fattura (F5)<P>Immediata</html>");
+			btnFatturaImmediata.addActionListener(new MyButtonListener());
+		}
+		return btnFatturaImmediata;
 	}
 }

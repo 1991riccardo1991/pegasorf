@@ -52,7 +52,7 @@ public class VenditeModel extends AbstractTableModel implements DBStateChange {
 		if ( vendita.size() == 0 )
 			return -1;
 		DettaglioScarico v = vendita.get(r);
-		Vector<Object> v1 = v.trasformaInArray();
+		Vector<Object> v1 = v.trasformaInArrayConPercentualeIva();
 		Object o = null;
 		o = (Object)v1.get(c);
 

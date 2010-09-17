@@ -2,6 +2,8 @@ package rf.pegaso.db.tabelle;
 
 import it.infolabs.hibernate.Articolo;
 import it.infolabs.hibernate.ArticoloHome;
+import it.infolabs.hibernate.CodiciIva;
+import it.infolabs.hibernate.CodiciIvaHome;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -569,6 +571,27 @@ public class DettaglioScarico implements Comparator<DettaglioScarico>{
 			v.add((prezzoVendita*qta)-(((prezzoVendita*qta)/100)*sconto));
 		v.add(sconto);
 		v.add(iva);
+		return v;
+	}
+	
+	public Vector<Object> trasformaInArrayConPercentualeIva() {
+		Vector<Object> v = new Vector<Object>();
+		v.add(idArticolo);
+		v.add(codiceBarre);
+		v.add(descrizione);
+		v.add(um);
+		v.add(qta);
+		v.add(disponibilita);
+		v.add(prezzoAcquisto);
+		v.add(prezzoVendita);
+		if ( sconto == 0)
+			v.add(prezzoVendita*qta);
+		else
+			v.add((prezzoVendita*qta)-(((prezzoVendita*qta)/100)*sconto));
+		v.add(sconto);
+		
+		CodiciIva codiceIva=CodiciIvaHome.getInstance().findById(iva);
+		v.add(codiceIva.getPercentuale());
 		return v;
 	}
 
