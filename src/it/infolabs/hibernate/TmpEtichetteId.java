@@ -12,6 +12,7 @@ public class TmpEtichetteId implements java.io.Serializable {
 	private String descrizione;
 	private Double prezzo;
 	private String note;
+	private String codbarre;
 
 	public TmpEtichetteId() {
 	}
@@ -21,12 +22,13 @@ public class TmpEtichetteId implements java.io.Serializable {
 	}
 
 	public TmpEtichetteId(long id, String codice, String descrizione,
-			Double prezzo, String note) {
+			Double prezzo, String note, String codbarre) {
 		this.id = id;
 		this.codice = codice;
 		this.descrizione = descrizione;
 		this.prezzo = prezzo;
 		this.note = note;
+		this.codbarre = codbarre;
 	}
 
 	public long getId() {
@@ -68,6 +70,14 @@ public class TmpEtichetteId implements java.io.Serializable {
 	public void setNote(String note) {
 		this.note = note;
 	}
+	
+	public String getCodbarre() {
+		return this.codbarre;
+	}
+
+	public void setCodbarre(String codbarre) {
+		this.codbarre = codbarre;
+	}
 
 	public boolean equals(Object other) {
 		if ((this == other))
@@ -93,7 +103,10 @@ public class TmpEtichetteId implements java.io.Serializable {
 						.equals(castOther.getPrezzo())))
 				&& ((this.getNote() == castOther.getNote()) || (this.getNote() != null
 						&& castOther.getNote() != null && this.getNote()
-						.equals(castOther.getNote())));
+						.equals(castOther.getNote())))
+				&& ((this.getCodbarre() == castOther.getCodbarre()) || (this.getCodbarre() != null
+						&& castOther.getCodbarre() != null && this.getCodbarre()
+						.equals(castOther.getCodbarre())));
 	}
 
 	public int hashCode() {
@@ -110,6 +123,8 @@ public class TmpEtichetteId implements java.io.Serializable {
 				+ (getPrezzo() == null ? 0 : this.getPrezzo().hashCode());
 		result = 37 * result
 				+ (getNote() == null ? 0 : this.getNote().hashCode());
+		result = 37 * result
+				+ (getCodbarre() == null ? 0 : this.getCodbarre().hashCode());
 		return result;
 	}
 
