@@ -591,7 +591,11 @@ public class DettaglioScarico implements Comparator<DettaglioScarico>{
 		v.add(sconto);
 		
 		CodiciIva codiceIva=CodiciIvaHome.getInstance().findById(iva);
-		v.add(codiceIva.getPercentuale());
+		if(codiceIva==null){
+			v.add(0);
+		}else {
+			v.add(codiceIva.getPercentuale());
+		}
 		return v;
 	}
 

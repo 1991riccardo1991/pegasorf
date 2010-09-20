@@ -1,8 +1,12 @@
 package rf.pegaso.gui.internalframe;
 
+import it.infolabs.document.listeners.DocumentEvent;
+import it.infolabs.document.listeners.DocumentEvent.DocumentAction;
 import it.infolabs.hibernate.Articolo;
 import it.infolabs.hibernate.Documento;
+import it.infolabs.hibernate.DocumentoHome;
 import it.infolabs.hibernate.Fattura;
+import it.infolabs.hibernate.FatturaHome;
 import it.infolabs.hibernate.Pannelli;
 import it.infolabs.hibernate.PannelliHome;
 import it.infolabs.hibernate.exception.FindAllEntityException;
@@ -688,8 +692,17 @@ public class VenditaInternalFrame extends JInternalFrame implements TableModelLi
 	public void emissioneFatturaImmediata() {
 		Documento documento=new Documento();
 		Fattura fattura=new Fattura(documento);
-		FatturaImmediata ftImmediata=new FatturaImmediata(pannelloCarrello.getCarrello(),fattura);
+		documento.setFattura(fattura);
+		DocumentEvent event=new DocumentEvent();
+		FatturaImmediata ftImmediata=new FatturaImmediata(pannelloCarrello.getCarrello(), fattura, event);
 		ftImmediata.setVisible(true);
+		if(event.getAction()==DocumentEvent.DocumentAction.SAVE){
+			FatturaHome.getInstance().begin();
+			DocumentoHome.getInstance().attachDirty(documento);
+			FatturaHome.getInstance().attachDirty(fattura);
+			FatturaHome.getInstance().commitAndClose();
+		}
+		
 	}
 
 	private void m_jButtonKeysKeyPerformed(JButtonEvent evt) {

@@ -4,9 +4,9 @@
 <!-- Generated 27-giu-2010 12.59.17 by Hibernate Tools 3.2.4.GA -->
 <hibernate-mapping>
     <class name="it.infolabs.hibernate.Documento" table="documento" schema="doc">
-        <id name="id" type="long">
+        <id name="id" type="long" unsaved-value="0">
             <column name="id" />
-            <generator class="assigned" />
+            <generator class="native" />
         </id>
         <many-to-one name="cliente" class="it.infolabs.hibernate.Cliente" fetch="select">
             <column name="cliente" />

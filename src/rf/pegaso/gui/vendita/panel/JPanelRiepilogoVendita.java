@@ -184,6 +184,7 @@ public class JPanelRiepilogoVendita extends JPanel {
 			Object o = null;
 			
 			// Recuperiamo l'oggetto CodiceIva
+			CodiciIvaHome.getInstance().begin();
 			CodiciIva codiceIva=CodiciIvaHome.getInstance().findById(riga.getIva());
 			
 

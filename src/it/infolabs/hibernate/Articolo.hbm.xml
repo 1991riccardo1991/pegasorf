@@ -4,9 +4,9 @@
 <!-- Generated 27-giu-2010 12.59.17 by Hibernate Tools 3.2.4.GA -->
 <hibernate-mapping>
     <class name="it.infolabs.hibernate.Articolo" table="articolo" schema="public">
-        <id name="idarticolo" type="long">
+        <id name="idarticolo" type="long" unsaved-value="0">
             <column name="idarticolo" />
-            <generator class="assigned" />
+            <generator class="increment" />
         </id>
         <many-to-one name="pannelli" class="it.infolabs.hibernate.Pannelli" fetch="select">
             <column name="idpannello" />

@@ -1,5 +1,7 @@
 package rf.pegaso.gui.vendita;
 
+import it.infolabs.document.listeners.DocumentEvent;
+import it.infolabs.document.listeners.DocumentEvent.DocumentAction;
 import it.infolabs.hibernate.Cliente;
 import it.infolabs.hibernate.ClienteHome;
 import it.infolabs.hibernate.Fattura;
@@ -30,6 +32,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -62,6 +65,7 @@ import rf.pegaso.db.tabelle.DettaglioScarico;
 import rf.pegaso.db.tabelle.Pagamento;
 import rf.pegaso.db.tabelle.Scarico;
 import rf.pegaso.db.tabelle.Vendita;
+import rf.pegaso.gui.InitialGUI;
 import rf.pegaso.gui.gestione.ClientiAdd;
 import rf.utility.ControlloDati;
 import rf.utility.collection.MyArrayList;
@@ -74,7 +78,7 @@ import rf.utility.gui.text.UpperAutoCompleteDocument;
 
 import com.toedter.calendar.JDateChooser;
 
-public class FatturaImmediata extends JFrame{
+public class FatturaImmediata extends JDialog{
 
 	/**
 	 *
@@ -176,11 +180,14 @@ public class FatturaImmediata extends JFrame{
 	//usata per sapere se si effettua una modifca oppure no
 	private boolean modifica;
 	private Fattura fattura;
+	private DocumentEvent documentEvent;  //  @jve:decl-index=0:
 	
 	
-	public FatturaImmediata(MyArrayList carrello, Fattura fattura){
+	public FatturaImmediata(MyArrayList carrello, Fattura fattura, DocumentEvent event){
+		super(InitialGUI.getMainInstance(),true);
 		this.dbm = DBManager.getIstanceSingleton();
 		this.fattura=fattura;
+		this.documentEvent=event;
 		caricaCarrello(carrello);
 		initialize();
 	}
@@ -221,7 +228,7 @@ public class FatturaImmediata extends JFrame{
 				setEnabled(true);
 			}
 		});
-		UtilGUI.centraFrame(this);
+		UtilGUI.centraDialog(this);
 		caricaClienti();
 //		caricaDescrizione();
 		caricaPagamento();
@@ -381,20 +388,24 @@ public class FatturaImmediata extends JFrame{
 	}
 
 	private void close(){
-		if( carrello.size() >= 2 ){
+		if( carrello.size() >= 1 ){
 			int scelta = JOptionPane.showConfirmDialog(this,
 					"Uscire senza salvare i cambiamenti?",
 					"AVVISO", JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE);
-			if (scelta == JOptionPane.YES_OPTION)
+			if (scelta == JOptionPane.YES_OPTION){
+				this.documentEvent.setAction(DocumentAction.NOTHING);
 				dispose();
-			else{
+			}else{
 				salva();
+				this.documentEvent.setAction(DocumentAction.SAVE);
 				dispose();
 			}
 		}
-		else
+		else{
+			this.documentEvent.setAction(DocumentAction.NOTHING);
 			dispose();
+		}
 	}
 
 	/**
@@ -791,6 +802,8 @@ public class FatturaImmediata extends JFrame{
 		dbm.notifyDBStateChange();
 		resetCampi();
 		modifica=false;
+		this.documentEvent.setAction(DocumentAction.SAVE);
+		dispose();
 	}
 
 	private void resetCampi(){
@@ -1928,6 +1941,7 @@ public class FatturaImmediata extends JFrame{
 		if (btnAzzera == null) {
 			btnAzzera = new JButton();
 			btnAzzera.setBounds(new Rectangle(467, 7, 78, 26));
+			btnAzzera.setEnabled(false);
 			btnAzzera.setText("Azzera");
 			btnAzzera.addActionListener(new MyButtonListener());
 		}
