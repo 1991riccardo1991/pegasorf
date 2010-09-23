@@ -123,38 +123,16 @@ public class FatturaImmediata extends JDialog{
 	private Vector<DettaglioScarico> carrello = null;  //  @jve:decl-index=0:
 	private Vector<String> colonne = null;  //  @jve:decl-index=0:
 	private VenditeModel model = null;
-	private JDateChooser dataTrasporto = null;
 	private double utile = 0.00;
 	private int scontoTotale = 0;
 	private double imponibile = 0.00;
 	private double imposta = 0.00;
 	private JButton btnElimina = null;
-	private JLabel lblDestinazione = null;
 	private JLabel lblSpeseInc = null;
 	private JLabel lblSpeseTr = null;
-	private JTextField txtDestinazione = null;
 	private JFormattedTextField txtSpeseInc = null;
 	private JFormattedTextField txtSpeseTr = null;
-	private JLabel lblDataTr = null;
-	private JLabel lblOraTr = null;
-	private JLabel lblColli = null;
-	private JLabel lblPeso = null;
-	private JFormattedTextField txtColli = null;
-	private JFormattedTextField txtPeso = null;
-	private JLabel lblCausale = null;
-	private JLabel lblAspetto = null;
-	private JLabel lblConsegna = null;
-	private IDJComboBox cmbCausale = null;
-	private IDJComboBox cmbAspetto = null;
-	private JComboBox cmbConsegna = null;
-	private JLabel lblPorto = null;
-	private JComboBox cmbPorto = null;
 	private JButton btnNuovoPagamento = null;
-	private JButton btnNuovaCausale = null;
-	private JButton btnNuovoAspetto = null;
-	private JFormattedTextField txtOraTr = null;
-	private JLabel lblPuntini = null;
-	private JFormattedTextField txtMinTr = null;
 	private JTabbedPane jTabbedPane = null;
 	private JPanel pnlFattura = null;
 	private JPanel pnlViewFattura = null;
@@ -232,14 +210,11 @@ public class FatturaImmediata extends JDialog{
 		caricaClienti();
 //		caricaDescrizione();
 		caricaPagamento();
-		caricaCausale();
 		caricaAspetto();
 		caricaVettoreColonne();
 		txtNumero.setText(String.valueOf(dbm.getNewID("ordini", "idordine")));
 
 		Calendar c=Calendar.getInstance();
-		txtOraTr.setText(String.valueOf(c.get(Calendar.HOUR_OF_DAY)));
-		txtMinTr.setText(String.valueOf(c.get(Calendar.MINUTE)));
 		saved = false;
 		modifica=false;
 	}
@@ -267,16 +242,6 @@ public class FatturaImmediata extends JDialog{
 				nuovoPagamento();
 				caricaPagamento();
 				cmbPagamento.setSelectedItemByID((dbm.getNewID("pagamento","idpagamento") - 1));
-			}
-			else if ( e.getSource() == btnNuovoAspetto ){
-				nuovoAspetto();
-				caricaAspetto();
-				cmbAspetto.setSelectedItemByID((dbm.getNewID("aspetto","idaspetto") - 1));
-			}
-			else if ( e.getSource() == btnNuovaCausale ){
-				nuovaCausale();
-				caricaCausale();
-				cmbCausale.setSelectedItemByID((dbm.getNewID("causale","idcausale") - 1));
 			}
 			else if ( e.getSource() == btnEliminaFattura )
 				eliminaFattura();
@@ -432,76 +397,17 @@ public class FatturaImmediata extends JDialog{
 	 */
 	private JPanel getJPanelNord() {
 		if (jPanelNord == null) {
-			lblPuntini = new JLabel();
-			lblPuntini.setBounds(new Rectangle(280, 184, 10, 16));
-			lblPuntini.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			lblPuntini.setHorizontalAlignment(SwingConstants.CENTER);
-			lblPuntini.setVerticalAlignment(SwingConstants.CENTER);
-			lblPuntini.setText(":");
-			lblPorto = new JLabel();
-			lblPorto.setBounds(new Rectangle(665, 184, 40, 16));
-			lblPorto.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			lblPorto.setHorizontalAlignment(SwingConstants.CENTER);
-			lblPorto.setVerticalAlignment(SwingConstants.CENTER);
-			lblPorto.setText("Porto");
-			lblConsegna = new JLabel();
-			lblConsegna.setBounds(new Rectangle(495, 184, 70, 16));
-			lblConsegna.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			lblConsegna.setHorizontalAlignment(SwingConstants.CENTER);
-			lblConsegna.setVerticalAlignment(SwingConstants.CENTER);
-			lblConsegna.setText("Consegna");
-			lblAspetto = new JLabel();
-			lblAspetto.setBounds(new Rectangle(495, 141, 70, 16));
-			lblAspetto.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			lblAspetto.setHorizontalAlignment(SwingConstants.CENTER);
-			lblAspetto.setVerticalAlignment(SwingConstants.CENTER);
-			lblAspetto.setText("Aspetto");
-			lblCausale = new JLabel();
-			lblCausale.setBounds(new Rectangle(495, 98, 70, 16));
-			lblCausale.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			lblCausale.setHorizontalAlignment(SwingConstants.CENTER);
-			lblCausale.setVerticalAlignment(SwingConstants.CENTER);
-			lblCausale.setText("Causale");
-			lblPeso = new JLabel();
-			lblPeso.setBounds(new Rectangle(355, 184, 60, 16));
-			lblPeso.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			lblPeso.setHorizontalAlignment(SwingConstants.CENTER);
-			lblPeso.setVerticalAlignment(SwingConstants.CENTER);
-			lblPeso.setText("Peso (Kg)");
-			lblColli = new JLabel();
-			lblColli.setBounds(new Rectangle(355, 141, 60, 16));
-			lblColli.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			lblColli.setHorizontalAlignment(SwingConstants.CENTER);
-			lblColli.setVerticalAlignment(SwingConstants.CENTER);
-			lblColli.setText("Colli (Nr)");
-			lblOraTr = new JLabel();
-			lblOraTr.setBounds(new Rectangle(175, 184, 50, 16));
-			lblOraTr.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			lblOraTr.setHorizontalAlignment(SwingConstants.CENTER);
-			lblOraTr.setVerticalAlignment(SwingConstants.CENTER);
-			lblOraTr.setText("Ora Tr");
-			lblDataTr = new JLabel();
-			lblDataTr.setBounds(new Rectangle(175, 141, 50, 16));
-			lblDataTr.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			lblDataTr.setHorizontalAlignment(SwingConstants.CENTER);
-			lblDataTr.setVerticalAlignment(SwingConstants.CENTER);
-			lblDataTr.setText("Data Tr");
 			lblSpeseTr = new JLabel();
-			lblSpeseTr.setBounds(new Rectangle(10, 184, 80, 16));
+			lblSpeseTr.setBounds(new Rectangle(164, 91, 80, 16));
 			lblSpeseTr.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 			lblSpeseTr.setHorizontalAlignment(SwingConstants.CENTER);
 			lblSpeseTr.setVerticalAlignment(SwingConstants.CENTER);
 			lblSpeseTr.setText("Spese Tr");
 			lblSpeseInc = new JLabel();
-			lblSpeseInc.setBounds(new Rectangle(10, 141, 80, 16));
+			lblSpeseInc.setBounds(new Rectangle(10, 92, 80, 16));
 			lblSpeseInc.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 			lblSpeseInc.setHorizontalAlignment(SwingConstants.CENTER);
 			lblSpeseInc.setText("Spese Inc");
-			lblDestinazione = new JLabel();
-			lblDestinazione.setBounds(new Rectangle(10, 98, 80, 16));
-			lblDestinazione.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-			lblDestinazione.setHorizontalAlignment(SwingConstants.CENTER);
-			lblDestinazione.setText("Destinazione");
 			lblPagamento = new JLabel();
 			lblPagamento.setBounds(new Rectangle(495, 55, 70, 16));
 			lblPagamento.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
@@ -527,7 +433,7 @@ public class FatturaImmediata extends JDialog{
 			lblFattura.setText("FATTURA");
 			jPanelNord = new JPanel();
 			jPanelNord.setLayout(null);
-			jPanelNord.setPreferredSize(new Dimension(0, 230)); // Generated
+			jPanelNord.setPreferredSize(new Dimension(0, 150)); // Generated
 			jPanelNord.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
 			jPanelNord.add(getBtnChiudi(), null);
 			jPanelNord.add(getBtnSalva(), null);
@@ -542,33 +448,11 @@ public class FatturaImmediata extends JDialog{
 			jPanelNord.add(getBtnNuovoCliente(), null);
 			jPanelNord.add(lblPagamento, null);
 			jPanelNord.add(getCmbPagamento(), null);
-			jPanelNord.add(lblDestinazione, null);
 			jPanelNord.add(lblSpeseInc, null);
 			jPanelNord.add(lblSpeseTr, null);
-			jPanelNord.add(getTxtDestinazione(), null);
 			jPanelNord.add(getTxtSpeseInc(), null);
 			jPanelNord.add(getTxtSpeseTr(), null);
-			jPanelNord.add(lblDataTr, null);
-			jPanelNord.add(lblOraTr, null);
-			jPanelNord.add(getDataTrasporto(), null);
-			jPanelNord.add(lblColli, null);
-			jPanelNord.add(lblPeso, null);
-			jPanelNord.add(getTxtColli(), null);
-			jPanelNord.add(getTxtPeso(), null);
-			jPanelNord.add(lblCausale, null);
-			jPanelNord.add(lblAspetto, null);
-			jPanelNord.add(lblConsegna, null);
-			jPanelNord.add(getCmbCausale(), null);
-			jPanelNord.add(getCmbAspetto(), null);
-			jPanelNord.add(getCmbConsegna(), null);
-			jPanelNord.add(lblPorto, null);
-			jPanelNord.add(getCmbPorto(), null);
 			jPanelNord.add(getBtnNuovoPagamento(), null);
-			jPanelNord.add(getBtnNuovaCausale(), null);
-			jPanelNord.add(getBtnNuovoAspetto(), null);
-			jPanelNord.add(getTxtOraTr(), null);
-			jPanelNord.add(lblPuntini, null);
-			jPanelNord.add(getTxtMinTr(), null);
 			jPanelNord.add(getBtnAzzera(), null);
 		}
 		return jPanelNord;
@@ -642,17 +526,6 @@ public class FatturaImmediata extends JDialog{
 			} catch (Throwable throwable) {
 			}
 		return dataCorrente;
-	}
-
-	private JDateChooser getDataTrasporto() {
-		if (dataTrasporto == null)
-			try {
-				dataTrasporto = new JDateChooser("dd/MM/yyyy", "##/##/##", '_');
-				dataTrasporto.setDate(new java.util.Date());
-				dataTrasporto.setBounds(new Rectangle(235, 137, 100, 24));
-			} catch (Throwable throwable) {
-			}
-		return dataTrasporto;
 	}
 
 	/**
@@ -749,24 +622,12 @@ public class FatturaImmediata extends JDialog{
 			messaggioCampoMancante("Numero Fattura non presente.", "CAMPO VUOTO");
 			return;
 		}
-		int ora = Integer.parseInt(txtOraTr.getText());
-		int min = Integer.parseInt(txtMinTr.getText());
-		if ( ora < 0 || ora >24 || min < 0 || min > 60 ){
-			messaggioCampoMancante("Ora Trasporto mal formata.", "AVVISO");
-			return;
-		}
 		int idCliente = 0;
 		if ( cmbClienti.getIDSelectedItem() != null )
 			idCliente = Integer.parseInt(cmbClienti.getIDSelectedItem());
 		int idPagamento = 0;
 		if ( cmbPagamento.getIDSelectedItem() != null )
 			idPagamento = Integer.parseInt(cmbPagamento.getIDSelectedItem());
-		int idCausale = 0;
-		if ( cmbCausale.getIDSelectedItem() != null )
-			idCausale = Integer.parseInt(cmbCausale.getIDSelectedItem());
-		int idAspetto = 0;
-		if ( cmbAspetto.getIDSelectedItem() != null )
-			idAspetto = Integer.parseInt(cmbAspetto.getIDSelectedItem());
 		double speseInc = 0.00;
 		double speseTr = 0.00;
 		int colli = 0;
@@ -777,10 +638,6 @@ public class FatturaImmediata extends JDialog{
 				speseInc = ControlloDati.convertPrezzoToDouble(txtSpeseInc.getText());
 			if ( !txtSpeseTr.getText().equals("") )
 				speseTr = ControlloDati.convertPrezzoToDouble(txtSpeseTr.getText());
-			if ( !txtColli.getText().equals("") )
-				colli = Integer.parseInt(txtColli.getText());
-			if ( !txtPeso.getText().equals("") )
-				peso = ControlloDati.convertPrezzoToDouble(txtPeso.getText());
 			if ( !txtSconto.getText().equals("") )
 				sconto = Integer.parseInt(txtSconto.getText());
 		} catch (NumberFormatException e) {
@@ -788,8 +645,6 @@ public class FatturaImmediata extends JDialog{
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		final Time oraTr = new Time(ora, min, 0);
-
 		this.fattura.getDocumento().setCliente(ClienteHome.getInstance().findById(idCliente));
 		this.fattura.getDocumento().setDataEmissione(dataCorrente.getDate());
 		this.fattura.setPagamento(PagamentoHome.getInstance().findById(idPagamento));
@@ -810,13 +665,9 @@ public class FatturaImmediata extends JDialog{
 		txtNumero.setText(String.valueOf(dbm.getNewID("ordini", "idordine")));
 		caricaClienti();
 		caricaPagamento();
-		caricaCausale();
 		caricaAspetto();
-		txtDestinazione.setText("");
 		txtSpeseInc.setText("0,00");
 		txtSpeseTr.setText("0,00");
-		txtColli.setText("0");
-		txtPeso.setText("0,00");
 		carrello.removeAllElements();
 		DettaglioScarico v = new DettaglioScarico();
 		carrello.add(v);
@@ -1101,20 +952,7 @@ public class FatturaImmediata extends JDialog{
 		AutoCompletion.enable(cmbPagamentoR);
 	}
 
-	private void caricaCausale(){
-		Causale c = new Causale();
-		try {
-
-			String as[] = (String[]) c.allCausali();
-			// carichiamo tutti i dati in due array
-			// da passre al combobox
-			((IDJComboBox) cmbCausale).caricaNewValueComboBox(as, false);
-		} catch (SQLException e) {
-			messaggioCampoMancante("Errore caricamento causale nel combobox", "ERRORE");
-			e.printStackTrace();
-		}
-		AutoCompletion.enable(cmbCausale);
-	}
+	
 
 	private void caricaAspetto(){
 //		Aspetto a = new Aspetto();
@@ -1339,19 +1177,6 @@ public class FatturaImmediata extends JDialog{
 	}
 
 	/**
-	 * This method initializes txtDestinazione
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JTextField getTxtDestinazione() {
-		if (txtDestinazione == null) {
-			txtDestinazione = new JTextField();
-			txtDestinazione.setBounds(new Rectangle(100, 96, 375, 20));
-		}
-		return txtDestinazione;
-	}
-
-	/**
 	 * This method initializes txtSpeseInc
 	 *
 	 * @return javax.swing.JTextField
@@ -1360,7 +1185,7 @@ public class FatturaImmediata extends JDialog{
 		if (txtSpeseInc == null) {
 			DecimalFormat notaz = new DecimalFormat( "#,##0.00");
 			txtSpeseInc = new JFormattedTextField(notaz);
-			txtSpeseInc.setBounds(new Rectangle(100, 139, 55, 20));
+			txtSpeseInc.setBounds(new Rectangle(100, 90, 55, 20));
 		}
 		return txtSpeseInc;
 	}
@@ -1374,102 +1199,9 @@ public class FatturaImmediata extends JDialog{
 		if (txtSpeseTr == null) {
 			DecimalFormat notaz = new DecimalFormat( "#,##0.00");
 			txtSpeseTr = new JFormattedTextField(notaz);
-			txtSpeseTr.setBounds(new Rectangle(100, 182, 55, 20));
+			txtSpeseTr.setBounds(new Rectangle(254, 89, 55, 20));
 		}
 		return txtSpeseTr;
-	}
-
-	/**
-	 * This method initializes txtColli
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JFormattedTextField getTxtColli() {
-		if (txtColli == null) {
-			DecimalFormat notaz = new DecimalFormat( "#");
-			txtColli = new JFormattedTextField(notaz);
-			txtColli.setBounds(new Rectangle(425, 139, 50, 20));
-		}
-		return txtColli;
-	}
-
-	/**
-	 * This method initializes txtPeso
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JFormattedTextField getTxtPeso() {
-		if (txtPeso == null) {
-			DecimalFormat notaz = new DecimalFormat( "#,##0.00");
-			txtPeso = new JFormattedTextField(notaz);
-			txtPeso.setBounds(new Rectangle(425, 182, 50, 20));
-		}
-		return txtPeso;
-	}
-
-	/**
-	 * This method initializes cmbCausale
-	 *
-	 * @return javax.swing.JComboBox
-	 */
-	private JComboBox getCmbCausale() {
-		if (cmbCausale == null) {
-			cmbCausale = new IDJComboBox();
-			cmbCausale.setBounds(new Rectangle(575, 93, 150, 26));
-		}
-		return cmbCausale;
-	}
-
-	/**
-	 * This method initializes cmbAspetto
-	 *
-	 * @return javax.swing.JComboBox
-	 */
-	private JComboBox getCmbAspetto() {
-		if (cmbAspetto == null) {
-			cmbAspetto = new IDJComboBox();
-			cmbAspetto.setBounds(new Rectangle(575, 136, 150, 26));
-		}
-		return cmbAspetto;
-	}
-
-	/**
-	 * This method initializes cmbConsegna
-	 *
-	 * @return javax.swing.JComboBox
-	 */
-	private JComboBox getCmbConsegna() {
-		if (cmbConsegna == null) {
-			Vector<String> v = new Vector<String>();
-			v.add("Mittente");
-			v.add("Destinatario");
-			v.add("Vettore");
-			cmbConsegna = new JComboBox(v);
-			cmbConsegna.setBounds(new Rectangle(575, 179, 80, 26));
-			cmbConsegna.addItemListener(new java.awt.event.ItemListener() {
-				public void itemStateChanged(java.awt.event.ItemEvent e) {
-					if (cmbConsegna.getSelectedItem().equals("Vettore"))
-						System.out.println("itemStateChanged()"); // TODO Auto-generated Event stub itemStateChanged()
-				}
-			});
-		}
-		return cmbConsegna;
-	}
-
-	/**
-	 * This method initializes cmbPorto
-	 *
-	 * @return javax.swing.JComboBox
-	 */
-	private JComboBox getCmbPorto() {
-		if (cmbPorto == null) {
-			Vector<String> v = new Vector<String>();
-			v.add("Franco");
-			v.add("Assegnato");
-			cmbPorto = new JComboBox(v);
-			cmbPorto.setBounds(new Rectangle(715, 179, 67, 26));
-		}
-		return cmbPorto;
 	}
 
 	/**
@@ -1490,69 +1222,9 @@ public class FatturaImmediata extends JDialog{
 		return btnNuovoPagamento;
 	}
 
-	/**
-	 * This method initializes btnNuovaCausale
-	 *
-	 * @return javax.swing.JButton
-	 */
-	private JButton getBtnNuovaCausale() {
-		if (btnNuovaCausale == null) {
-			btnNuovaCausale = new JButton();
-			btnNuovaCausale.setBounds(new Rectangle(740, 93, 42, 26));
-			btnNuovaCausale.setToolTipText("Nuova Causale");
-			String userDir = System.getProperty("user.dir");
-			btnNuovaCausale.setIcon(new ImageIcon(userDir+File.separator+"\\resource\\nuovo.png"));
-			btnNuovaCausale.addActionListener(new MyButtonListener());
-			//btnNuovoAspetto.setIcon(new ImageIcon("C:/Documents and Settings/Administrator/Documenti/workspace3/Pegaso/resource/nuovo.png"));
-		}
-		return btnNuovaCausale;
-	}
+	
 
-	/**
-	 * This method initializes btnNuovoAspetto
-	 *
-	 * @return javax.swing.JButton
-	 */
-	private JButton getBtnNuovoAspetto() {
-		if (btnNuovoAspetto == null) {
-			btnNuovoAspetto = new JButton();
-			btnNuovoAspetto.setBounds(new Rectangle(740, 136, 42, 26));
-			btnNuovoAspetto.setToolTipText("Nuovo Aspetto");
-			String userDir = System.getProperty("user.dir");
-			btnNuovoAspetto.setIcon(new ImageIcon(userDir+File.separator+"\\resource\\nuovo.png"));
-			btnNuovoAspetto.addActionListener(new MyButtonListener());
-			//btnNuovoAspetto.setIcon(new ImageIcon("C:/Documents and Settings/Administrator/Documenti/workspace3/Pegaso/resource/nuovo.png"));
-		}
-		return btnNuovoAspetto;
-	}
-
-	/**
-	 * This method initializes txtOraTr
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JFormattedTextField getTxtOraTr() {
-		if (txtOraTr == null) {
-			DecimalFormat notaz = new DecimalFormat( "##00");
-			txtOraTr = new JFormattedTextField(notaz);
-			txtOraTr.setBounds(new Rectangle(235, 182, 40, 20));
-		}
-		return txtOraTr;
-	}
-
-	/**
-	 * This method initializes txtMinTr
-	 *
-	 * @return javax.swing.JTextField
-	 */
-	private JFormattedTextField getTxtMinTr() {
-		if (txtMinTr == null) {
-			DecimalFormat notaz = new DecimalFormat( "##00");
-			txtMinTr = new JFormattedTextField(notaz);
-			txtMinTr.setBounds(new Rectangle(295, 182, 40, 20));
-		}
-		return txtMinTr;
-	}
+	
 
 	/**
 	 * This method initializes jTabbedPane
@@ -1747,19 +1419,9 @@ public class FatturaImmediata extends JDialog{
 		txtNumero.setText(scarico.getNumDocumento());
 		dataCorrente.setDate(scarico.getDataScarico());
 		cmbClienti.setSelectedItemByID(scarico.getIdCliente());
-		txtDestinazione.setText(scarico.getDestDiversa());
 		txtSpeseInc.setValue(((scarico.getSpeseIncasso())));
 		txtSpeseTr.setValue((scarico.getSpeseTrasporto()));
-		dataTrasporto.setDate(scarico.getDataTrasporto());
-		txtOraTr.setValue((scarico.getOraTrasporto().getHours()));
-		txtMinTr.setValue((scarico.getOraTrasporto().getMinutes()));
-		txtColli.setValue((scarico.getColli()));
-		txtPeso.setValue((scarico.getPeso()));
 		cmbPagamento.setSelectedItemByID(scarico.getIdPagamento());
-		cmbCausale.setSelectedItemByID(scarico.getIdCausale());
-		cmbAspetto.setSelectedItemByID(scarico.getIdAspetto());
-		cmbConsegna.setSelectedItem(scarico.getConsegna());
-		cmbPorto.setSelectedItem(scarico.getPorto());
 		txtSconto.setText(String.valueOf(scarico.getSconto()));
 	}
 
